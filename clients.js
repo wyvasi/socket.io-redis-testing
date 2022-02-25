@@ -1,9 +1,9 @@
 const { io } = require("socket.io-client");
-
+const { portOne, portTwo } = require('./config');
 const sockets = [];
 
 (Array.from(Array(50).keys())).forEach((index) => {
-    sockets.push(io('ws://localhost:3000'));
+    sockets.push(io(`ws://localhost:${(index % 2) ? portOne : portTwo }`));
 });
 
 const createEvents = (socket) => {
@@ -17,7 +17,7 @@ const createEvents = (socket) => {
     });
 
     socket.on('emitter', (data) => {
-        console.log(`socket ${socket.id}: ${data}`);
+        // console.log(`socket ${socket.id}: ${data}`);
     });
 };
 

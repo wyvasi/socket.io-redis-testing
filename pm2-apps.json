@@ -1,0 +1,25 @@
+{
+    "apps": [
+        {
+            "name": "main",
+            "instances": 3,
+            "exec_mode": "cluster",
+            "node_args": ["--trace-warnings"],
+            "script": "./main.js"
+        },
+        {
+            "name": "clients-counter",
+            "instances": 3,
+            "exec_mode": "cluster",
+            "node_args": ["--trace-warnings"],
+            "script": "./get-clients.js"
+        },
+        {
+            "name": "clients-connector",
+            "instances": 3,
+            "exec_mode": "cluster",
+            "node_args": ["--trace-warnings"],
+            "script": "./clients.js"
+        }
+    ]
+}

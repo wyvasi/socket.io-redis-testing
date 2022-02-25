@@ -25,11 +25,13 @@ Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
     }, 2500);
 });
 
+const x = 10;
+
 setInterval(async () => {
     const sockets = await io.in("hello").fetchSockets();
-    console.log(`List with sockets connected to hello: ${sockets.length}`);
+    console.log(`List with sockets connected to hello room: ${sockets.length}`);
     sockets.forEach(socket => {
         console.log(socket.id);
         // io.in(socket.id).socketsLeave('hello');
     });
-}, 3500);
+}, 10000);
