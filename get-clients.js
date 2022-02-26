@@ -12,7 +12,6 @@ Promise.all([getClient(redisUrl), getClient(redisUrl)])
         io.adapter(createAdapter(pubClient, subClient, { key }));
         io.listen(portOne);
 
-
         io.on('get-clients', (data) => {
             io.emit('emitter', 'Message broadcasted from get-clients!');
         });
@@ -28,8 +27,8 @@ let counter = 0;
 setInterval(async () => {
     // Rejoin sockets in room
     if (counter++ % 2) {
-        await io.in(socketList).socketJoin('hello');
-        socketList.length = 0;
+        await io.in(socketsList).socketJoin('hello');
+        socketsList.length = 0;
     }
     // Get sockets from room
     const sockets = await io.in("hello").fetchSockets();
