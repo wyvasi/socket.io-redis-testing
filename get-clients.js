@@ -12,6 +12,11 @@ Promise.all([getClient(redisUrl), getClient(redisUrl)])
         io.adapter(createAdapter(pubClient, subClient, { key }));
         io.listen(portOne);
 
+        io.on('connect', (socket) => {
+            socket.join('hello');
+            // console.log(`connected ${socket.id}`);
+        });
+
         io.on('get-clients', (data) => {
             io.emit('emitter', 'Message broadcasted from get-clients!');
         });
@@ -41,4 +46,4 @@ setInterval(async () => {
             socketsList.push(socket.id);
         }
     });
-}, 10000);
+}, 15000);
