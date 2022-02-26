@@ -30,20 +30,20 @@ Promise.all([getClient(redisUrl), getClient(redisUrl)])
 
 let counter = 0;
 setInterval(async () => {
-    // Rejoin sockets in room
-    if (counter++ % 2) {
-        await io.in(socketsList).socketsJoin('hello');
-        socketsList.length = 0;
-    }
+    // // Rejoin sockets in room
+    // if (counter++ % 2) {
+    //     await io.in(socketsList).socketsJoin('hello');
+    //     socketsList.length = 0;
+    // }
     // Get sockets from room
     const sockets = await io.in("hello").fetchSockets();
     console.log(`List with sockets connected to hello room: ${sockets.length}`);
-    // Leave sockets from room
-    let i = 0;
-    sockets.forEach(socket => {
-        if (i++ < 10) {
-            io.in(socket.id).socketsLeave('hello');
-            socketsList.push(socket.id);
-        }
-    });
+    // // Leave sockets from room
+    // let i = 0;
+    // sockets.forEach(socket => {
+    //     if (i++ < 10) {
+    //         io.in(socket.id).socketsLeave('hello');
+    //         socketsList.push(socket.id);
+    //     }
+    // });
 }, 15000);
