@@ -27,7 +27,7 @@ let counter = 0;
 setInterval(async () => {
     // Rejoin sockets in room
     if (counter++ % 2) {
-        await io.in(socketsList).socketJoin('hello');
+        await io.in(socketsList).socketsJoin('hello');
         socketsList.length = 0;
     }
     // Get sockets from room
