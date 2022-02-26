@@ -1,21 +1,21 @@
 {
     "apps": [
         {
-            "name": "socket-main",
-            "instances": 3,
+            "name": "socket-sever-two",
+            "instances": 1,
             "exec_mode": "cluster",
             "node_args": ["--trace-warnings"],
             "script": "./main.js"
         },
         {
-            "name": "socket-clients-counter",
-            "instances": 3,
+            "name": "socket-server-one",
+            "instances": 1,
             "exec_mode": "cluster",
             "node_args": ["--trace-warnings"],
             "script": "./get-clients.js"
         },
         {
-            "name": "socket-clients-connector",
+            "name": "socket-clients",
             "instances": 3,
             "exec_mode": "cluster",
             "node_args": ["--trace-warnings"],

@@ -11,26 +11,29 @@ let emitter = null;
 getClient(redisUrl)
     .then((pubClient) => {
         emitter = new Emitter(pubClient, { key });
-
-        // setInterval(() => {
-        //     emitter.to('hello').emit('emitter', (new Date).valueOf());
-        // }, 2500);
     });
 
 const rl = readline.createInterface({ input, output });
 
 console.log(`
     Welcome, here are you can use next commands:
-    emit room message
+    emit $room $message
+    clients add $number
+    clients remove $number
 `);
 
 rl.on('line', (input) => {
-    const messages = (input || '').split(' ');
-    if (messages[0]) {
-        const room = messages[1];
-        const message = messages[2] || 'default message';
-        emitter.to(room).emit('emitter', message);
+    const [type, room, message] = (input || '').split(' ');
+    if (type === 'emit') {
+        emitter.to(room).emit('emitter', message || 'default message');
         console.log(`Sent data to all sockets in room ${room}`);
     }
+    else if (type === 'clients') {
+        emitter.emit('clients' , {
+            type: room,
+            number: parseInt(message)
+        });
+    }
+    // emitter.serverSideEmit()
     return true;
 });

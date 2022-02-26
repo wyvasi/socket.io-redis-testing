@@ -2,8 +2,8 @@ const { io } = require('socket.io-client');
 const { portOne, portTwo } = require('./config');
 const sockets = [];
 
-// Creates 50 socket connections to localhost
-(Array.from(Array(50).keys())).forEach((index) => {
+// Creates x socket connections to localhost
+(Array.from(Array(10).keys())).forEach((index) => {
     sockets.push(io(`ws://localhost:${(index % 2) ? portOne : portTwo }`));
 });
 

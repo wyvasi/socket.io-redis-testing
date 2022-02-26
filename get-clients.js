@@ -1,32 +1,22 @@
-
-const { Server } = require("socket.io");
-const { createAdapter } = require("@socket.io/redis-adapter");
-const { Emitter } = require("@socket.io/redis-emitter");
-const { getClient } = require("./libs/redis");
-const { redisUrl, key, portOne } = require('./config');
-const io = new Server();
+const { portOne } = require('./config');
+const { getServer } = require('./libs/server');
+// const io = new Server();
 const socketsList = [];
 
-Promise.all([getClient(redisUrl), getClient(redisUrl)])
-    .then(([pubClient, subClient]) => {
-        io.adapter(createAdapter(pubClient, subClient, { key }));
-        io.listen(portOne);
+let io;
 
-        io.on('connect', (socket) => {
-            socket.join('hello');
-            // console.log(`connected ${socket.id}`);
-        });
+(async() => {
+    io = await getServer(portOne);
 
-        io.on('get-clients', (data) => {
-            io.emit('emitter', 'Message broadcasted from get-clients!');
-        });
-        // const emitter = new Emitter(pubClient, { key });
-
-        // setInterval(() => {
-        //     emitter.to('hello').emit("emitter", (new Date).valueOf());
-        // }, 2500);
+    io.on('connect', (socket) => {
+        socket.join('hello');
+        // console.log(`connected ${socket.id}`);
     });
 
+    io.on('get-clients', (data) => {
+        io.emit('emitter', 'Message broadcasted from get-clients!');
+    });
+})();
 
 let counter = 0;
 setInterval(async () => {
