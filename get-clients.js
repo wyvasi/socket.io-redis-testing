@@ -1,37 +1,45 @@
 
-const {Server} = require("socket.io");
-const {createAdapter} = require("@socket.io/redis-adapter");
+const { Server } = require("socket.io");
+const { createAdapter } = require("@socket.io/redis-adapter");
 const { Emitter } = require("@socket.io/redis-emitter");
-const {createClient} = require("redis");
-const {redisUrl, key, portOne} = require('./config');
+const { getClient } = require("./libs/redis");
+const { redisUrl, key, portOne } = require('./config');
 const io = new Server();
+const socketsList = [];
 
-const pubClient = createClient({ url: redisUrl });
-pubClient.on('connect', () => console.log('Connected to REDIS!'));
-pubClient.on('error', (err) => console.log('Error connecting to REDIS: ', err));
+Promise.all([getClient(redisUrl), getClient(redisUrl)])
+    .then(([pubClient, subClient]) => {
+        io.adapter(createAdapter(pubClient, subClient, { key }));
+        io.listen(portOne);
 
-const subClient = pubClient.duplicate();
-subClient.on('connect', () => console.log('Connected to REDIS!'));
-subClient.on('error', (err) => console.log('Error connecting to REDIS: ', err));
 
-Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
-    io.adapter(createAdapter(pubClient, subClient, { key }));
-    io.listen(portOne);
+        io.on('get-clients', (data) => {
+            io.emit('emitter', 'Message broadcasted from get-clients!');
+        });
+        // const emitter = new Emitter(pubClient, { key });
 
-    const emitter = new Emitter(pubClient, { key });
+        // setInterval(() => {
+        //     emitter.to('hello').emit("emitter", (new Date).valueOf());
+        // }, 2500);
+    });
 
-    setInterval(() => {
-        emitter.emit("emitter", (new Date).valueOf());
-    }, 2500);
-});
 
-const x = 10;
-
+let counter = 0;
 setInterval(async () => {
+    // Rejoin sockets in room
+    if (counter++ % 2) {
+        await io.in(socketList).socketJoin('hello');
+        socketList.length = 0;
+    }
+    // Get sockets from room
     const sockets = await io.in("hello").fetchSockets();
     console.log(`List with sockets connected to hello room: ${sockets.length}`);
+    // Leave sockets from room
+    let i = 0;
     sockets.forEach(socket => {
-        console.log(socket.id);
-        // io.in(socket.id).socketsLeave('hello');
+        if (i++ < 10) {
+            io.in(socket.id).socketsLeave('hello');
+            socketsList.push(socket.id);
+        }
     });
 }, 10000);
